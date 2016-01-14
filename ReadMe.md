@@ -40,7 +40,19 @@ Build Process:
 
 Running the build on Windows should produce an artifact that is tested and ready to be used.
 
+## NOTES
 
+We might want to install visual studio 2015 into the image
+
+ * turbo run chocolatey -a --admin -n=chocolatest --pull
+ * in the container 
+   * @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/installabsolutelatest.ps1'))"
+   * choco feature enable -n autoUninstaller
+   * choco feature enable -n allowGlobalConfirmation
+   * exit
+ * turbo commit --overwrite chocolatest chocolateylatest
+ * turbo push chocolateylatest
+   
 ## Setup
 
 You need the following installed on a machine that you will use the verifier with:

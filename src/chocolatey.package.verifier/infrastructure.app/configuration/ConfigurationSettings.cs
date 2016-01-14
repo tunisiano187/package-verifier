@@ -31,10 +31,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   Gets the application settings value.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="defaultValue">A default value</param>
         /// <returns>A string with the settings value; otherwise an empty string</returns>
-        public string get_application_settings_value(string name)
+        public string get_application_settings_value(string name, string defaultValue = null)
         {
-            return ConfigurationManager.AppSettings.Get(name);
+            var setting = ConfigurationManager.AppSettings.Get(name);
+            if (string.IsNullOrWhiteSpace(setting) && defaultValue != null) return defaultValue;
+
+            return setting;
         }
 
         /// <summary>
@@ -108,7 +112,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
 
         public int CommandExecutionTimeoutSeconds
         {
-            get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
+            get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds","1200")); }
         }
 
         public string PathToVagrant { get { return get_application_settings_value("PathToVagrant"); } }

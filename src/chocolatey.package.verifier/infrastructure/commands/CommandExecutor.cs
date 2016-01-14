@@ -270,5 +270,61 @@ namespace chocolatey.package.verifier.infrastructure.commands
         {
             if (e != null) ApplicationParameters.Name.Log().Error(e.Data);
         }
+
+        public StreamWriter execute_redirect_stdin(
+            string process,
+            string arguments,
+            string workingDirectory,
+            Action<object, DataReceivedEventArgs> stdOutAction,
+            Action<object, DataReceivedEventArgs> stdErrAction,
+            bool updateProcessPath,
+            bool allowUseWindow
+            )
+        {
+            return execute_redirect_stdin_static(process, arguments, workingDirectory, stdOutAction, stdErrAction, updateProcessPath, allowUseWindow);
+        }
+
+        public static StreamWriter execute_redirect_stdin_static(
+            string process,
+            string arguments,
+            string workingDirectory,
+            Action<object, DataReceivedEventArgs> stdOutAction,
+            Action<object, DataReceivedEventArgs> stdErrAction,
+            bool updateProcessPath,
+            bool allowUseWindow
+            )
+        {
+            int exitCode = -1;
+            if (updateProcessPath) process = file_system.get_full_path(process);
+
+            ApplicationParameters.Name.Log().Debug(() => "Calling command ['\"{0}\" {1}']".format_with(process, arguments));
+
+            var psi = new ProcessStartInfo(process, arguments)
+            {
+                UseShellExecute = false,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = !allowUseWindow,
+                WindowStyle = ProcessWindowStyle.Minimized,
+            };
+
+            using (var p = new Process())
+            {
+                p.StartInfo = psi;
+                if (stdOutAction == null) p.OutputDataReceived += log_output;
+                else p.OutputDataReceived += (s, e) => stdOutAction(s, e);
+                if (stdErrAction == null) p.ErrorDataReceived += log_error;
+                else p.ErrorDataReceived += (s, e) => stdErrAction(s, e);
+
+                p.EnableRaisingEvents = true;
+                p.Start();
+                p.BeginErrorReadLine();
+                p.BeginOutputReadLine();
+
+                return p.StandardInput;
+            }
+        }
     }
 }

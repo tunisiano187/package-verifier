@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
 
     public interface ICommandExecutor
     {
@@ -48,6 +49,16 @@ namespace chocolatey.package.verifier.infrastructure.commands
             string arguments,
             int waitForExitInSeconds,
             string workingDirectory,
+            bool updateProcessPath,
+            bool allowUseWindow
+            );
+
+        StreamWriter execute_redirect_stdin(
+            string process,
+            string arguments,
+            string workingDirectory,
+            Action<object, DataReceivedEventArgs> stdOutAction,
+            Action<object, DataReceivedEventArgs> stdErrAction,
             bool updateProcessPath,
             bool allowUseWindow
             );

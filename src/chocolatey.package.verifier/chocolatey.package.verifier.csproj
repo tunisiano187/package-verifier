@@ -138,6 +138,7 @@
     <Compile Include="infrastructure.app\services\IPackageTestService.cs" />
     <Compile Include="infrastructure.app\results\TestCommandOutputResult.cs" />
     <Compile Include="infrastructure.app\services\NuGetService.cs" />
+    <Compile Include="infrastructure.app\services\TurboService.cs" />
     <Compile Include="infrastructure.app\services\VagrantService.cs" />
     <Compile Include="infrastructure.app\tasks\CheckForPackagesTask.cs" />
     <Compile Include="infrastructure.app\tasks\CreateGistTask.cs" />
